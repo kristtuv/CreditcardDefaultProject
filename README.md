@@ -6,6 +6,7 @@ scikit-learn    0.19.2
 python          3.6.2      
 numpy           1.13.3      
 matplotlib      2.0.2       
+xlrd            1.1.0   
       
     
 ## Structure of the repo    
