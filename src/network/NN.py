@@ -257,6 +257,28 @@ class NeuralNet():
         cls_pred = np.argmax(ypred, axis=1)
         return 100.0/y.shape[0]*np.sum(cls_pred == y)
 
+    def gain_chart(self, y, ypred, threshold = 0.5):
+
+        "binary only"
+
+        num1 = np.count_nonzero(y == 1)
+        sort = np.argsort(ypred[:, 1])
+        y_sort = ypred[sort[::-1]] # decreasing order
+        lab_sort = y[sort[::-1]]
+        print(y_sort[:10])
+
+        fracs = np.arange(0, 1.1, 0.1)
+        gains = np.zeros(len(fracs))
+
+        for i in range(len(fracs)):
+            pred_frac = y_sort[:int(fracs[i]*y.shape[0])]
+            lab_frac = lab_sort[:int(fracs[i]*y.shape[0])]
+            print(pred_frac[:,1].shape, lab_frac.shape)
+            gains[i] = np.sum((pred_frac[:,1] > threshold) == lab_frac)/num1
+
+        plt.plot(fracs, gains)
+        plt.show()
+
 
     def feed_forward(self, x, isTraining = True):
         """
@@ -383,3 +405,5 @@ class NeuralNet():
                     self.convergence_rate['Epoch'].append(epoch)
                     self.convergence_rate['Test Accuracy'].append(testAcc)
                     #print("-"*75)
+
+        self.gain_chart(self.yTest, ypred_test)
