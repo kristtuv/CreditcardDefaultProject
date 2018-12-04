@@ -261,22 +261,40 @@ class NeuralNet():
 
         "binary only"
 
-        num1 = np.count_nonzero(y == 1)
+        num1 = np.sum(y)
+        frac1 = num1/y.shape[0]
         sort = np.argsort(ypred[:, 1])
         y_sort = ypred[sort[::-1]] # decreasing order
         lab_sort = y[sort[::-1]]
-        print(y_sort[:10])
 
-        fracs = np.arange(0, 1.1, 0.1)
+        fracs = np.arange(0, 1.01, 0.01)
         gains = np.zeros(len(fracs))
 
         for i in range(len(fracs)):
-            pred_frac = y_sort[:int(fracs[i]*y.shape[0])]
             lab_frac = lab_sort[:int(fracs[i]*y.shape[0])]
-            print(pred_frac[:,1].shape, lab_frac.shape)
-            gains[i] = np.sum((pred_frac[:,1] > threshold) == lab_frac)/num1
+            gains[i] = np.sum(lab_frac)/num1
 
-        plt.plot(fracs, gains)
+        def best(x):
+            if x < frac1:
+                return x/frac1
+            else:
+                return 1
+        besty = np.zeros_like(fracs)
+        for i in range(len(besty)):
+            besty[i] = best(fracs[i])
+
+        area_best = np.trapz(besty - fracs, fracs)
+        area_model = np.trapz(gains - fracs, fracs)
+        ratio = area_model/area_best
+        print("Area ratio: ", ratio)
+
+        plt.plot(fracs, gains, label='Lift Curve')
+        plt.plot(fracs, fracs, '--', label='Baseline')
+        plt.plot(fracs, besty, '--', label='Best Curve')
+        plt.xlabel('Fraction of total data', fontsize=14)
+        plt.ylabel('Cumulative number of target data', fontsize=14)
+        plt.grid(True)
+        plt.legend()
         plt.show()
 
 
