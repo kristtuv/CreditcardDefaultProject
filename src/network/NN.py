@@ -374,6 +374,37 @@ class NeuralNet():
         plt.legend()
         plt.show()
 
+    def prob_acc(self, y, ypred, n = 50):
+
+        sort = np.argsort(ypred[:, 1])
+        pred_sort = ypred[sort[::-1]]
+        lab_sort = y[sort[::-1]]
+
+        P = np.zeros((y.shape[0] - 2*n))
+
+        for i in range(len(P)):
+            P[i] = np.sum(lab_sort[n + i: 3*n + i +1])/(2*n +1)
+
+        pred_plt = pred_sort[n:-n, 1]
+
+        ## DO LINREG
+        from sklearn.linear_model import LinearRegression
+        reg = LinearRegression().fit(pred_plt.reshape(-1, 1),P)
+        b = reg.intercept_
+        a = reg.coef_[0]
+        R2 = reg.score(pred_plt.reshape(-1,1), P)
+        print("R2 score: ", R2)
+
+        plt.plot(pred_plt, P, 'o', markersize=0.8)
+        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f" %(a, b))
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.xlabel("Predicted probability")
+        plt.ylabel("Actual probability")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
 
     def feed_forward(self, x, isTraining = True):
         """
@@ -502,3 +533,4 @@ class NeuralNet():
                     #print("-"*75)
 
         self.gain_chart(self.yTest, ypred_test)
+        self.prob_acc(self.yTest, ypred_test)
