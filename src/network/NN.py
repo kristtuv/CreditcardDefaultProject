@@ -258,13 +258,27 @@ class NeuralNet():
         return 100.0/y.shape[0]*np.sum(cls_pred == y)
 
     def gain_chart(self, y, ypred, threshold = 0.5):
+        """
+        Creates a gains chart for the predicted y-values
+        when classifying a binary variable. Predicted y-values
+        are given as a percent confidence of which class it
+        belongs to. The percent over the given threshold is
+        predicted as class 1 and everything under is given
+        as class 2.
 
-        "binary only"
+        param: y: correct label
+        type: y: ndarray
+        param: ypred: Predicted labels given in percent confidence
+        type: ypred: ndarray
+        param: threshold: number [0,1] desciding the threshold
+        between the classes
+        type: threshold: float
+        return: None
+        """
 
         num1 = np.sum(y)
         frac1 = num1/y.shape[0]
         sort = np.argsort(ypred[:, 1])
-        y_sort = ypred[sort[::-1]] # decreasing order
         lab_sort = y[sort[::-1]]
 
         fracs = np.arange(0, 1.01, 0.01)
