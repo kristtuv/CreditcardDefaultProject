@@ -100,14 +100,16 @@ class NeuralNet():
             self.xTrain = xTrain ; self.xTest = xTest
             self.yTrain = yTrain ; self.yTest = yTest
             self.nTrain = xTrain.shape[0] ; self.nTest = xTest.shape[0]
+            print(self.nTrain)
         if resample:
             # try:
-            self.xTrain, self.yTrain = self.resample(self.xTrain, self.yTrain)
-            print(self.xTrain.shape, self.yTrain.shape)
+            self.xTrain, self.yTrain = self.resample(self.xTrain, self.yTrain, oversample=True)
+            self.nTrain = self.xTrain.shape[0]
+            print(self.nTrain)
             # except NameError:
             #     print("Resampling requires the data to be split into training and test. Implement the frac argument")
                 
-    def resample(self, xTrain, yTrain, one_zero_ratio=1.0):
+    def resample(self, xTrain, yTrain, one_zero_ratio=1.0, undersample=False, oversample=True) :
         """
         Resampling the training data for binary classification with
         labels 0 and 1. Function assumes the data is skewed
@@ -122,25 +124,40 @@ class NeuralNet():
         type: yTrain: ndarray
         param: one_zero_ratio: ratio between class 0 and class 1 after resample
         """
-        #Indices of rows with class one
-        ones_idx = np.flatnonzero(yTrain)
-        #Number of rows with class zero
-        N_zero_rows = len(yTrain) - len(ones_idx)        
-        #Number of new rows with class one need to give correct ratio
-        N_one_rows = int(one_zero_ratio*N_zero_rows - len(ones_idx))
-        #Resample using indices of ones_idx
-        resample_idx = np.random.choice(ones_idx, N_one_rows)
+        if undersample:
+            #Indices of rows with class zero
+            zeros_idx = np.flatnonzero(yTrain==0)
+            N_one_rows = len(yTrain) - len(zeros_idx)        
 
-        #New Samples 
-        ySample = yTrain[resample_idx]
-        xSample = xTrain[resample_idx]
-        #Add samples to training set
-        xTrain = np.concatenate((xTrain, xSample), axis=0)
-        yTrain = np.concatenate((yTrain, ySample), axis=0)
-        #Suffle training set
-        xTrain = np.random.permutation(xTrain)
-        yTrain = np.random.permutation(yTrain)
-        return xTrain, yTrain
+            N_zero_rows = int(len(zeros_idx) - N_one_rows/one_zero_ratio)
+            #Resample using indices of ones_idx
+            resample_idx = np.random.choice(zeros_idx, N_zero_rows)
+            xTrain = np.delete(xTrain, resample_idx, axis=0)
+            yTrain = np.delete(yTrain, resample_idx, axis=0)
+
+            return xTrain, yTrain
+
+        if oversample:
+            #Indices of rows with class one
+            ones_idx = np.flatnonzero(yTrain)
+            #Number of rows with class zero
+            N_zero_rows = len(yTrain) - len(ones_idx)        
+            #Number of new rows with class one need to give correct ratio
+            N_one_rows = int(one_zero_ratio*N_zero_rows - len(ones_idx))
+            #Resample using indices of ones_idx
+            resample_idx = np.random.choice(ones_idx, N_one_rows)
+
+            #New Samples 
+            ySample = yTrain[resample_idx]
+            xSample = xTrain[resample_idx]
+            #Add samples to training set
+            xTrain = np.concatenate((xTrain, xSample), axis=0)
+            yTrain = np.concatenate((yTrain, ySample), axis=0)
+            #Suffle training set
+            shuffle_idx = np.random.permutation(np.arange(len(yTrain)) )
+            xTrain = xTrain[shuffle_idx]
+            yTrain = yTrain[shuffle_idx]
+            return xTrain, yTrain
 
         
 
