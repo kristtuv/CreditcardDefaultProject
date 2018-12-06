@@ -470,5 +470,5 @@ class NeuralNet():
                     self.convergence_rate['Test Accuracy'].append(testAcc)
                     #print("-"*75)
 
-        self.gain_chart(self.yTest, ypred_test)
+        #self.gain_chart(self.yTest, ypred_test)
         # self.prob_acc(self.yTest, ypred_test)
