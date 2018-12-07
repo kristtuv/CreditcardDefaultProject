@@ -25,17 +25,22 @@ xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size = 0.5)
 # clf = svm.SVC(gamma=0.1, kernel='rbf', C=0.001, probability=True, max_iter=20)#, class_weight={0: 20})
 gamma = [1, 0.1, 0.01, 0.001, 0.0001]
 C = [10, 1.0, 0.1, 0.01, 0.001, 0.0001]
+kernels = ['linear', 'rbf', 'poly']
+degrees = np.arange(1, 11)
 # gamma = [0.1]
 # C = [0.1, 0.01]
 dic = {'clf': []}
 for g in gamma:
     for c in C:
-        clf = svm.SVC(kernel='rbf', gamma=g, C=c, probability=True)
-        dic['clf'].append(clf)
+        for k in kernels:
+            for d in degrees:
+                clf = svm.SVC(kernel=k, degree=d, C=c, gamma=g, probability=True)
+        # clf = svm.SVC(kernel='rbf', gamma=g, C=c, probability=True)
+                dic['clf'].append(clf)
 
 for i in dic['clf']:
     i.fit(xTrain, yTrain)
-    print('GAMMA: ', i.gamma, 'C: ', i.C)
+    print('GAMMA: ', i.gamma, 'C: ', i.C, 'KERNEL: ', i.kernel, 'DEGREE: ', i.degree)
     ypred_train = i.predict_proba(xTrain)
     ypred_test = i.predict_proba(xTest)
     gain_chart(yTrain, ypred_train, plot=False)
