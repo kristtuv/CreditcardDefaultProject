@@ -29,8 +29,9 @@ parser.add_argument('--kernel', type=str, default='rbf')
 parser.add_argument('--degree', type=int, default='11')
 args =parser.parse_args()
 kernels = [str(args.kernel)]
-degrees = np.arange(1, args.degree)
-if kernels[0] == 'linear':
+if kernels[0] == 'poly':
+    degrees = np.arange(1, args.degree)
+else:
     degrees = [0]
 
 gamma = [1, 0.1, 0.01, 0.001, 0.0001]
