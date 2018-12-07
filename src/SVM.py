@@ -36,8 +36,6 @@ if kernels[0] == 'linear':
 gamma = [1, 0.1, 0.01, 0.001, 0.0001]
 C = [10, 1.0, 0.1, 0.01, 0.001, 0.0001]
 dic = {'clf': []}
-print(kernels, degrees)
-exit()
 for g in gamma:
     for c in C:
         for k in kernels:
