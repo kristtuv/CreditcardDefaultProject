@@ -50,6 +50,7 @@ def gain_chart(y, ypred, threshold = 0.5, plot = True):
         plt.plot(fracs, gains, label='Lift Curve')
         plt.plot(fracs, fracs, '--', label='Baseline')
         plt.plot(fracs, besty, '--', label='Best Curve')
+        plt.plot([], [], ' ', label='Area ratio: %.4f' %ratio)
         plt.xlabel('Fraction of total data', fontsize=14)
         plt.ylabel('Cumulative number of target data', fontsize=14)
         plt.grid(True)
@@ -81,7 +82,7 @@ def prob_acc(y, ypred, n = 50, plot = True):
 
     if plot:
         plt.plot(pred_plt, P, 'o', markersize=0.8)
-        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f" %(a, b))
+        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f\n R2 = %.4f" %(a, b,R2))
         plt.xlim([0, 1])
         plt.ylim([0, 1])
         plt.xlabel("Predicted probability")

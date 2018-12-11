@@ -13,7 +13,7 @@ Y = Y.flatten()
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.5)
 
 
-clf_rf = RandomForestClassifier(n_estimators=100, max_depth=10)
+clf_rf = RandomForestClassifier(n_estimators=100, max_depth=6)
 
 clf_rf.fit(X_train, Y_train)
 
@@ -24,7 +24,7 @@ prob_acc(Y_test, ypred_test)
 
 
 
-clf_dt = DecisionTreeClassifier(max_depth = 5)
+clf_dt = DecisionTreeClassifier(max_depth = 4)
 clf_dt.fit(X_train, Y_train)
 
 ypred_test = clf_dt.predict_proba(X_test)
