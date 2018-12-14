@@ -6,7 +6,6 @@ import time
 import warnings
 import argparse
 import pandas as pd
-import inspect
 
 from sklearn import svm
 from sklearn.preprocessing import LabelEncoder
