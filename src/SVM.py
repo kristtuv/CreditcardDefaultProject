@@ -5,13 +5,16 @@ import matplotlib.pylab as plt
 import time
 import warnings
 import argparse
+import pandas as pd
+import inspect
 
 from sklearn import svm
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_validate, train_test_split, KFold
-from metrics import gain_chart, prob_acc
+# from metrics import gain_chart, prob_acc
+from newmetrics import Metrics
 from read_data import get_data
 warnings.filterwarnings("ignore")
 sys.path.append("network/")
@@ -19,30 +22,6 @@ import signal
 import os
 from functools import wraps
 
-def timeout(timeout_seconds):
-    def decorator(function):
-        msg = 'Function (%s) used too much time (%s sec)' % (function.__name__, timeout_seconds)
-
-        def handler(signum, frame):
-            """If the signum event happens, a TimeoutError is raised"""
-            raise TimeoutError(msg)
-        def _f(*args, **kwargs):
-            signal.alarm(0)
-            old = signal.signal(signal.SIGALRM, handler) #Store the default handler of SIGALRM
-            signal.alarm(timeout_seconds) #Seconds before SIGALRM signal is set
-            try:
-                #Will go to finally block when SIGALRM is set
-                # after timeout_seconds nr of seconds
-                #because SIGLRM raises TimeoutError
-                print(os.getpid())
-                function_result = function(*args, **kwargs) 
-            finally:
-                signal.signal(signal.SIGALRM, old) # Reset handler to default
-            signal.alarm(0) #Reset signal to default
-            return function_result
-        _f.__name__ = function.__name__
-        return _f
-    return decorator
 
 
 def _convert_string_float(x):
@@ -67,6 +46,8 @@ def parse_args() -> dict:
                         help='Choose gammas', default=[None])
     parser.add_argument('--C', nargs='*', type=float, 
                         help='Choose Cs', default=[None])
+    parser.add_argument('--maxiter', nargs=1, type=int, 
+                        help='Choose max iterations of svm', default=[-1])
     args =  vars(parser.parse_args())
     args['gammas'] = list(map(_convert_string_float, args['gammas']))
     return args
@@ -76,16 +57,16 @@ def svm_dict(d: dict) -> dict:
     Creating a dictionary of svm instances
     """
     svm_dictionary = {'svm': []}
-
+    max_iter=d['maxiter'][0]
     for k in d['kernels']:
         for g in d['gammas']:
             for c in d['C']:
                 if k == 'rbf' or k == 'linear':
-                    Svm = svm.SVC(kernel=k, C=c, gamma=g, probability=True, max_iter=5000)
+                    Svm = svm.SVC(kernel=k, C=c, gamma=g, probability=True, max_iter=max_iter)
                     svm_dictionary['svm'].append(Svm)
                 else:
                     for d in d['degrees']:
-                        Svm = svm.SVC(kernel=k, C=c, gamma=g, degree=d, probability=True)
+                        Svm = svm.SVC(kernel=k, C=c, gamma=g, degree=d, probability=True, max_iter=max_iter)
                         svm_dictionary['svm'].append(Svm)
     return svm_dictionary
 
@@ -103,49 +84,48 @@ def svm_parameters():
     return defaults
 
 def predict(clf, xTrain, xTest, yTrain, yTest):
-    print('in predict')
-    # dummy()
-    # print('done with dummy')
     # print('GAMMA: ', clf.gamma, 'C: ', clf.C, 'KERNEL: ', clf.kernel, 'DEGREE: ', clf.degree)
-    print('fittin')
     clf.fit(xTrain, yTrain)
-    print('done fittin')
-    # print('Fit done')
-    # ypred_train = clf.predict_proba(xTrain)
-    # ypred_test = clf.predict_proba(xTest)
-    
-    
-    # gain_chart(yTrain, ypred_train, plot=False)
-    # gain_chart(yTest, ypred_test, plot=False)
-    # prob_acc(yTrain, ypred_train, plot=False)
-    # prob_acc(yTest, ypred_test, plot=False) 
+    ypred_train = clf.predict_proba(xTrain)
+    ypred_test = clf.predict_proba(xTest)
 
+    Train = Metrics(yTrain, ypred_train)
+    Train.gain_chart(plot=False)
+    Train.prob_acc(plot=False)
+
+    Test = Metrics(yTest, ypred_test)
+    Test.gain_chart(plot=False)
+    Test.prob_acc(plot=False)
+    return Train, Test
 
 if __name__ == '__main__':
-    print(os.getpid())
     parameters = svm_parameters()
-    print(parameters)
     X, Y = get_data(normalized=False, standardized=True)
     Y = Y.flatten()
     xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size = 0.5)
-    print(svm_dict(parameters)['svm']) 
-    for i, clf in enumerate(svm_dict(parameters)['svm']):
-    # for i in range(10):
-        print(i)
-        try:
-            predict(clf, xTrain, xTest, yTrain, yTest)
+    # Area_ratio = {'Test': {}, 'Train': {}}
+    # R2_score = {'Test': {}, 'Train': {}}
+    Area_R2 =  {'Area_Test': {}, 'Area_Train': {}, 'R2_Test': {}, 'R2_Train':{}}
+    for clf in svm_dict(parameters)['svm']:
+        g = clf.gamma
+        c = clf.C
+        k = clf.kernel
+        d = clf.degree
+        m = clf.max_iter
+        filename='G%s_C%s_K%s_D%s_M%s' %(g, c, k, d, m)
 
-        except TimeoutError as TE:
-            print(str(TE))
-            continue
-        # try:
-        #     predict(clf, xTrain, xTest, yTrain, yTest)
+        Train, Test = predict(clf, xTrain, xTest, yTrain, yTest)
 
-        # except TimeoutError:
-        #     # print(str(TE))
-        #     print('hei')
-        #     continue
-
-
-
+        # Area_ratio[filename] = {'Test': Test.ratio, 'Train': Train.ratio}
+        
+        Area_R2['Area_Test'][filename] = Test.ratio
+        Area_R2['Area_Train'][filename] = Train.ratio
+        Area_R2['R2_Test'][filename] = Test.R2
+        Area_R2['R2_Train'][filename] = Train.R2
+        
+        Train.save_metrics('Train'+filename)
+        Test.save_metrics('Test'+filename)
+    df = pd.DataFrame(data=Area_R2)
+    df.sort_values(by=['Area_Test'], ascending=False, inplace=True)
+    df.to_csv('../SVMdata/Area_R2.csv')
 
