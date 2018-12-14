@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 import time
+import sys
 
 from sklearn import svm
 from sklearn.preprocessing import LabelEncoder
@@ -60,10 +61,14 @@ if __name__ == '__main__':
     Y = Y.flatten()
     xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size = 0.5)
     print('Import finished')
+    try:
+        maxiter = sys.argv[1]
+    except IndexError:
+        maxiter = 50000
 
-    svmdict = make_svm_dict(5, maxiter=5)
+    svmdict = make_svm_dict(5, maxiter=maxiter)
+
     Area_R2 =  {'Area_Test': {}, 'Area_Train': {}, 'R2_Test': {}, 'R2_Train':{}}
-
     for clf in svmdict['svm']:
         start = time.time()
         g = clf.gamma
