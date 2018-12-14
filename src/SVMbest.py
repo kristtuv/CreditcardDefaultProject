@@ -62,7 +62,7 @@ if __name__ == '__main__':
     xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size = 0.5)
     print('Import finished')
     try:
-        maxiter = sys.argv[1]
+        maxiter = int(sys.argv[1])
     except IndexError:
         maxiter = 50000
 
