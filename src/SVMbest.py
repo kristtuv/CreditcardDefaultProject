@@ -34,11 +34,11 @@ def make_instance(string: str, maxiter: int):
     type: maxiter: int
     """
     l = get_values(string)
-    g = l[0] 
+    g = l[0]
     c = l[1]
     k = l[2]
     d = l[3]
-    m = maxiter 
+    m = maxiter
     return svm.SVC(kernel=k, C=c, gamma=g, degree=d, probability=True, max_iter=m)
 
 def make_svm_dict(N_best: int, maxiter:int=50000):
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size = 0.5)
     print('Import finished')
     try:
-        maxiter = sys.argv[1]
+        maxiter = int(sys.argv[1])
     except IndexError:
         maxiter = 50000
 
@@ -90,5 +90,3 @@ if __name__ == '__main__':
     df = pd.DataFrame(data=Area_R2)
     df.sort_values(by=['Area_Test'], ascending=False, inplace=True)
     df.to_csv('../SVMdata/Area_R2_best_data.csv')
-
-

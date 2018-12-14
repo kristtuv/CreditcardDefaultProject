@@ -12,7 +12,7 @@ def gains():
         besty = df['besty']
         gains = df['gains']
         M().plot_gains(fracs, gains, besty)
-def prob()
+def prob():
     for f in prob_files:
         print(f)
         df = pd.read_csv(f, index_col=0)
