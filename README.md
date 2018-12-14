@@ -19,10 +19,10 @@ python SVMbest.py  in src directory
 Visualize by running      
 python SVMplot.py   in src directory       
    
-###credit_data   
+### credit_data   
 Data used for model fitting and prediction   
    
-###plots   
+### plots   
 Plots generated for report   
    
 ### src       
