@@ -90,7 +90,6 @@ class Metrics():
         b = reg.intercept_
         a = reg.coef_[0]
         R2 = reg.score(pred_plt.reshape(-1,1), P)
-        print("R2 score: ", R2)
         self.prob_params = [pred_plt, P, b, a]
         self.prob_dict = {'pred_plt':pred_plt, 'P':P, 'b': b, 'a':a}
         if plot:
