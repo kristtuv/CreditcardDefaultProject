@@ -5,8 +5,8 @@ class Metrics():
     def __init__(self, y, ypred):
         self.y = y
         self.ypred = ypred
-        # self.prob_params = []
-        # self.gain_params = []
+
+
     def gain_chart(self, threshold = 0.5, plot = True):
         """
         Creates a gains chart for the predicted y-values
@@ -108,10 +108,10 @@ class Metrics():
         plt.legend()
         plt.show()
 
-    def save_metrics(self, filename: str):
+    def save_metrics(self, path_to_dir: str, filename: str):
         file_dict = {**self.gain_dict, **self.prob_dict}
         df_gain = pd.DataFrame(data=self.gain_dict)
         df_prob = pd.DataFrame(data=self.prob_dict)
-        
-        df_gain.to_csv('../SVMdata/'+filename+'gain.csv')
-        df_prob.to_csv('../SVMdata/'+filename+'prob.csv')
+         
+        df_gain.to_csv(path_to_dir+filename+'gain.csv')
+        df_prob.to_csv(path_to_dir+filename+'prob.csv')
