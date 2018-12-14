@@ -65,8 +65,8 @@ def svm_dict(d: dict) -> dict:
                     Svm = svm.SVC(kernel=k, C=c, gamma=g, probability=True, max_iter=max_iter)
                     svm_dictionary['svm'].append(Svm)
                 else:
-                    for d in d['degrees']:
-                        Svm = svm.SVC(kernel=k, C=c, gamma=g, degree=d, probability=True, max_iter=max_iter)
+                    for deg in d['degrees']:
+                        Svm = svm.SVC(kernel=k, C=c, gamma=g, degree=deg, probability=True, max_iter=max_iter)
                         svm_dictionary['svm'].append(Svm)
     return svm_dictionary
 
