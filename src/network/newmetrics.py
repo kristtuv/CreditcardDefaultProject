@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pylab as plt
 import pandas as pd
 class Metrics():
-    def __init__(self, y, ypred):
+    def __init__(self, y=None, ypred=None):
         self.y = y
         self.ypred = ypred
 
