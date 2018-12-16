@@ -91,12 +91,12 @@ class LogReg():
             if epoch % 10 == 0 or epoch == 0:
 
                 logit_train = X_train @ beta
-                self.train_cost = (-np.sum((Y_train * logit_train) - np.log(1 + np.exp(logit_train))))/X_train.shape[0] + reg_cost(beta)
+                self.train_cost = 0.5*(-np.sum((Y_train * logit_train) - np.log(1 + np.exp(logit_train))))/X_train.shape[0] + reg_cost(beta)
                 self.p_train = 1/(1 + np.exp(-logit_train))
                 self.train_accuracy = np.sum((self.p_train > 0.5) == Y_train)/X_train.shape[0]
 
                 logit_test = X_test @ beta
-                self.test_cost = (-np.sum((Y_test * logit_test) - np.log(1 + np.exp(logit_test))))/X_test.shape[0] + reg_cost(beta)
+                self.test_cost = 0.5*(-np.sum((Y_test * logit_test) - np.log(1 + np.exp(logit_test))))/X_test.shape[0] + reg_cost(beta)
                 self.p_test = 1/(1 + np.exp(-logit_test))
                 self.test_accuracy = np.sum((self.p_test > 0.5) == Y_test)/X_test.shape[0]
 
