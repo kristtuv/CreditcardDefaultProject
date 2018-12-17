@@ -3,6 +3,7 @@ import numpy as np
 import re
 import time
 import sys
+import argparse
 
 from sklearn import svm
 from sklearn.preprocessing import LabelEncoder
@@ -14,6 +15,8 @@ from network.SVM import predict
 from network.SVM import _convert_string_float as csf
 from read_data import get_data
 from network.NN import NeuralNet
+from network.resampling import Resample as rs
+from imblearn.over_sampling import SMOTE
 
 def get_values(string: str):
     """
@@ -57,20 +60,49 @@ def make_svm_dict(N_best: int, maxiter:int=50000):
     return svm_dictionary
 
 
+def undersample(xTrain, yTrain):
+    resample = rs(xTrain, yTrain)
+    xTrain, yTrain = resample.Under()
+    return xTrain, yTrain
 
+def oversample(xTrain, yTrain):
+    resample = rs(xTrain, yTrain)
+    xTrain, yTrain = resample.Over()
+    return  xTrain, yTrain
 
+def smote(xTrain, yTrain):
+    sm = SMOTE()
+    xTrain, yTrain = sm.fit_resample(xTrain, yTrain)
+    return  xTrain, yTrain
+
+def parse_args() -> dict:
+    """Parsing arguments of the command line"""
+    parser = argparse.ArgumentParser('Set some values')
+    parser.add_argument('--maxiter', type=int,
+                        help='Choose max iterations', default=50000)
+    parser.add_argument('--resampling', type=str, default='None',
+                        help='Choose resampling method: undersample, oversample, smote')
+    parser.add_argument('--Nbest', type=int, default='5',
+                        help='Number of best models to rerun')
+    args =  vars(parser.parse_args())
+    return args
 if __name__ == '__main__':
+    
     print('Importing files')
     X, Y = get_data(normalized=False, standardized=True)
     Y = Y.flatten()
     xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size = 0.5)
-    print('Import finished')
-    try:
-        maxiter = int(sys.argv[1])
-    except IndexError:
-        maxiter = 1000000
 
-    svmdict = make_svm_dict(1, maxiter=maxiter)
+    args = parse_args()
+    maxiter = args['maxiter']
+    Nbest = args['Nbest']
+    try:
+        xTrain, yTrain = locals()[args['resampling']](xTrain, yTrain)
+    except KeyError:
+        pass
+    print('Import finished')
+
+    svmdict = make_svm_dict(Nbest, maxiter=maxiter)
 
     Area_R2 =  {'Area_Test': {}, 'Area_Train': {}, 'R2_Test': {}, 'R2_Train':{}}
     for clf in svmdict['svm']:
