@@ -116,7 +116,7 @@ class Metrics():
 
     def plot_acc(self, pred_plt, P, b, a): 
         plt.plot(pred_plt, P, 'o', markersize=0.8)
-        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f\n R2 = %.4f" %(a, b,R2))
+        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f\n R2 = %.4f" %(a, b,self.R2))
         plt.xlim([0, 1])
         plt.ylim([0, 1])
         plt.xlabel("Predicted probability", fontsize=14)
