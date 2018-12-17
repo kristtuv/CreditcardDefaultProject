@@ -116,13 +116,15 @@ if __name__ == '__main__':
 
         print('Starting ', filename)
         Train, Test = predict(clf, xTrain, xTest, yTrain, yTest)
-        print(filename+'accuracy: ', Test.acc)
         Area_R2['Area_Test'][filename] = Test.ratio
         Area_R2['Area_Train'][filename] = Train.ratio
         Area_R2['R2_Test'][filename] = Test.R2
         Area_R2['R2_Train'][filename] = Train.R2
         Test.save_metrics('../SVMdata/', filename)
         Train.save_metrics('../SVMdata/', filename)
+        print('accuracy: ', Test.acc)
+        print('Area_Test ', Test.ratio)
+        print('R2_Test ', Test.R2)
         print(filename, ' finished in {} seconds'.format(time.time() - start))
     df = pd.DataFrame(data=Area_R2)
     df.sort_values(by=['Area_Test'], ascending=False, inplace=True)
