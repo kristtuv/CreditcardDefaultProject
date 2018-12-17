@@ -123,7 +123,7 @@ if __name__ == '__main__':
         Area_R2['R2_Test'][filename] = Test.R2
         Area_R2['R2_Train'][filename] = Train.R2
         Area_R2['Accuracy'][filename] = Test.acc
-        Test.save_metrics('../SVMdata/', filename+str(args['resampling'])
+        Test.save_metrics('../SVMdata/', filename+str(args['resampling']))
         Train.save_metrics('../SVMdata/', filename+str(args['resampling'])
         print('accuracy: ', Test.acc)
         print('Area_Test ', Test.ratio)
