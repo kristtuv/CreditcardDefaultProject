@@ -131,4 +131,4 @@ if __name__ == '__main__':
         print(filename, ' finished in {} seconds'.format(time.time() - start))
     df = pd.DataFrame(data=Area_R2)
     df.sort_values(by=['Area_Test'], ascending=False, inplace=True)
-    df.to_csv('../SVMdata/Area_R2_best_data'+str(args['resampling']+'.csv')
+    df.to_csv('../SVMdata/Area_R2_best_data'+str(args['resampling'])+'.csv')
