@@ -69,17 +69,17 @@ class Metrics():
         area_model = np.trapz(gains - fracs, fracs)
         ratio = area_model/area_best
         self.gain_params = [fracs, gains, besty]
-        self.gain_dict = {'fracs': fracs, 'gains':gains, 'besty':besty}
+        self.gain_dict = {'fracs': fracs, 'gains':gains, 'besty':besty, 'ratio':ratio}
+        self.ratio = ratio
         if plot:
             self.plot_gains(*self.gain_params)
-        self.ratio = ratio
         return ratio
 
-    def plot_gains(self, fracs, gains, besty):
+    def plot_gains(self, fracs, gains, besty, ratio):
         plt.plot(fracs, gains, label='Lift Curve')
         plt.plot(fracs, fracs, '--', label='Baseline')
         plt.plot(fracs, besty, '--', label='Best Curve')
-        plt.plot([], [], ' ', label='Area ratio: %.4f' %ratio)
+        plt.plot([], [], ' ', label='Area ratio: %.4f' % ratio)
         plt.xlabel('Fraction of total data', fontsize=14)
         plt.ylabel('Cumulative number of target data', fontsize=14)
         plt.grid(True)
@@ -109,14 +109,14 @@ class Metrics():
         R2 = reg.score(pred_plt.reshape(-1,1), P)
         self.prob_params = [pred_plt, P, b, a]
         self.prob_dict = {'pred_plt':pred_plt, 'P':P, 'b': b, 'a':a}
+        self.R2 = R2
         if plot:
             self.plot_acc(*self.prob_params)
-        self.R2 = R2
         return R2
 
-    def plot_acc(self, pred_plt, P, b, a): 
+    def plot_acc(self, pred_plt, P, b, a, R2):
         plt.plot(pred_plt, P, 'o', markersize=0.8)
-        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f\n R2 = %.4f" %(a, b,self.R2))
+        plt.plot(pred_plt, b + pred_plt*a, label="y = %.3fx + %.3f\n R2 = %.4f" %(a, b,R2))
         plt.xlim([0, 1])
         plt.ylim([0, 1])
         plt.xlabel("Predicted probability", fontsize=14)
