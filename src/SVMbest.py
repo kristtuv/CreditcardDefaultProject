@@ -104,7 +104,9 @@ if __name__ == '__main__':
 
     svmdict = make_svm_dict(Nbest, maxiter=maxiter)
 
-    Area_R2 =  {'Area_Test': {}, 'Area_Train': {}, 'R2_Test': {}, 'R2_Train':{}}
+    Area_R2 =  {'Area_Test': {}, 'Area_Train': {},
+                'R2_Test': {}, 'R2_Train':{},
+                'Accuracy':{}}
     for clf in svmdict['svm']:
         start = time.time()
         g = clf.gamma
@@ -120,12 +122,13 @@ if __name__ == '__main__':
         Area_R2['Area_Train'][filename] = Train.ratio
         Area_R2['R2_Test'][filename] = Test.R2
         Area_R2['R2_Train'][filename] = Train.R2
-        Test.save_metrics('../SVMdata/', filename)
-        Train.save_metrics('../SVMdata/', filename)
+        Area_R2['Accuracy'][filename] = Test.acc
+        Test.save_metrics('../SVMdata/', filename+str(args['resampling'])
+        Train.save_metrics('../SVMdata/', filename+str(args['resampling'])
         print('accuracy: ', Test.acc)
         print('Area_Test ', Test.ratio)
         print('R2_Test ', Test.R2)
         print(filename, ' finished in {} seconds'.format(time.time() - start))
     df = pd.DataFrame(data=Area_R2)
     df.sort_values(by=['Area_Test'], ascending=False, inplace=True)
-    df.to_csv('../SVMdata/Area_R2_best_data.csv')
+    df.to_csv('../SVMdata/Area_R2_best_data'+str(args['resampling']+'.csv')
