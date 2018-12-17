@@ -76,7 +76,7 @@ class Metrics():
         return ratio
 
     def plot_gains(self, fracs, gains, besty):
-         plt.plot(fracs, gains, label='Lift Curve')
+        plt.plot(fracs, gains, label='Lift Curve')
         plt.plot(fracs, fracs, '--', label='Baseline')
         plt.plot(fracs, besty, '--', label='Best Curve')
         plt.plot([], [], ' ', label='Area ratio: %.4f' %ratio)
