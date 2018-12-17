@@ -1,12 +1,14 @@
 import numpy as np
+import sys
+sys.path.append("../network/")
+sys.path.append("../")
+
 from read_data import get_data
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import cross_validate, train_test_split, KFold
 from metrics import gain_chart, prob_acc
 from sklearn.tree import DecisionTreeClassifier
-import sys
-sys.path.append("network/")
 from resampling import Resample
 
 X, Y = get_data()
