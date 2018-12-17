@@ -7,6 +7,22 @@ class Metrics():
         self.ypred = ypred
 
 
+    def accuracy(self, y, ypred):
+        """
+        Measures the number of correctly
+        classified classes
+        param: y: correct labels
+        type: y: ndarray
+        param: y_pred: predicted labels
+        type: y_pred: ndarray
+        return: accuracy
+        """
+        cls_pred = np.argmax(ypred, axis=1)
+        acc = 100.0/y.shape[0]*np.sum(cls_pred == y)
+        self.acc = acc
+        return acc
+
+
     def gain_chart(self, threshold = 0.5, plot = True):
         """
         Creates a gains chart for the predicted y-values

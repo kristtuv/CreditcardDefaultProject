@@ -87,7 +87,7 @@ def predict(clf, xTrain, xTest, yTrain, yTest):
     clf.fit(xTrain, yTrain)
     ypred_train = clf.predict_proba(xTrain)
     ypred_test = clf.predict_proba(xTest)
-
+    
     Train = Metrics(yTrain, ypred_train)
     Train.gain_chart(plot=False)
     Train.prob_acc(plot=False)
@@ -95,6 +95,7 @@ def predict(clf, xTrain, xTest, yTrain, yTest):
     Test = Metrics(yTest, ypred_test)
     Test.gain_chart(plot=False)
     Test.prob_acc(plot=False)
+    Test.accuracy(yTest, ypred_test)
     return Train, Test
 
 if __name__ == '__main__':

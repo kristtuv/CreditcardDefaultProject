@@ -13,6 +13,7 @@ from sklearn.model_selection import cross_validate, train_test_split, KFold
 from network.SVM import predict
 from network.SVM import _convert_string_float as csf
 from read_data import get_data
+from network.NN import NeuralNet
 
 def get_values(string: str):
     """
@@ -55,6 +56,9 @@ def make_svm_dict(N_best: int, maxiter:int=50000):
         svm_dictionary['svm'].append(make_instance(s, maxiter=maxiter))
     return svm_dictionary
 
+
+
+
 if __name__ == '__main__':
     print('Importing files')
     X, Y = get_data(normalized=False, standardized=True)
@@ -64,9 +68,9 @@ if __name__ == '__main__':
     try:
         maxiter = int(sys.argv[1])
     except IndexError:
-        maxiter = 50000
+        maxiter = 1000000
 
-    svmdict = make_svm_dict(5, maxiter=maxiter)
+    svmdict = make_svm_dict(1, maxiter=maxiter)
 
     Area_R2 =  {'Area_Test': {}, 'Area_Train': {}, 'R2_Test': {}, 'R2_Train':{}}
     for clf in svmdict['svm']:
@@ -80,6 +84,7 @@ if __name__ == '__main__':
 
         print('Starting ', filename)
         Train, Test = predict(clf, xTrain, xTest, yTrain, yTest)
+        print(filename+'accuracy: ', Test.acc)
         Area_R2['Area_Test'][filename] = Test.ratio
         Area_R2['Area_Train'][filename] = Train.ratio
         Area_R2['R2_Test'][filename] = Test.R2
