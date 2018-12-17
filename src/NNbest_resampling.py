@@ -14,7 +14,7 @@ def initalized_neural(X: np.ndarray, Y: np.ndarray):
     return nn
 
 def train_neural(nn: NeuralNet): 
-    nn.TrainNN(epochs = 20, batchSize = 200, eta0 = 0.01, n_print = 1000)
+    nn.TrainNN(epochs = 10000, batchSize = 200, eta0 = 0.01, n_print = 10000)
     ypred_test = nn.feed_forward(nn.xTest, isTraining=False)
     
     print('accuracy: ', nn.accuracy(nn.yTest, ypred_test))

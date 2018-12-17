@@ -26,6 +26,6 @@ if __name__ == '__main__':
             if f.startswith('G') and f.endswith('prob.csv')]
     gain_files = ['../SVMdata/{}'.format(f) for f in listdir('../SVMdata/')
             if f.startswith('G') and f.endswith('gain.csv')]
-
-    gains()
+    
+    #gains()
     prob()
