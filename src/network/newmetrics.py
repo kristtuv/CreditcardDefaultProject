@@ -108,7 +108,7 @@ class Metrics():
         a = reg.coef_[0]
         R2 = reg.score(pred_plt.reshape(-1,1), P)
         self.prob_params = [pred_plt, P, b, a]
-        self.prob_dict = {'pred_plt':pred_plt, 'P':P, 'b': b, 'a':a}
+        self.prob_dict = {'pred_plt':pred_plt, 'P':P, 'b': b, 'a':a, 'R2':R2}
         self.R2 = R2
         if plot:
             self.plot_acc(*self.prob_params)
